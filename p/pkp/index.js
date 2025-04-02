@@ -1,12 +1,12 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
 import {parseHook} from '../../lib/profile-hooks.js';
 
 import {parseLocation} from '../../parse/location.js';
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 
 // https://github.com/public-transport/hafas-client/issues/184#issuecomment-2646119337
@@ -42,6 +42,4 @@ const profile = {
 	remarks: false, // seems like ver >= 1.20 is required
 };
 
-export {
-	profile,
-};
+export {profile};

@@ -1,12 +1,12 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
 import {strictEqual as eql} from 'assert';
 import {parseHook} from '../../lib/profile-hooks.js';
 import {parseLine} from '../../parse/line.js';
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 
 // todo: this is ugly
@@ -31,18 +31,30 @@ const lineNameWithoutFahrtNr = ({parsed}) => {
 	}
 	return parsed;
 };
-eql(lineNameWithoutFahrtNr({
-	parsed: {name: 'THA 123', fahrtNr: '123'},
-}).name, 'THA 123');
-eql(lineNameWithoutFahrtNr({
-	parsed: {name: 'S1 123', fahrtNr: '123'},
-}).name, 'S1');
-eql(lineNameWithoutFahrtNr({
-	parsed: {name: 'S1-123', fahrtNr: '123'},
-}).name, 'S1-123');
-eql(lineNameWithoutFahrtNr({
-	parsed: {name: 'S1 123a', fahrtNr: '123'},
-}).name, 'S1 123a');
+eql(
+	lineNameWithoutFahrtNr({
+		parsed: {name: 'THA 123', fahrtNr: '123'},
+	}).name,
+	'THA 123',
+);
+eql(
+	lineNameWithoutFahrtNr({
+		parsed: {name: 'S1 123', fahrtNr: '123'},
+	}).name,
+	'S1',
+);
+eql(
+	lineNameWithoutFahrtNr({
+		parsed: {name: 'S1-123', fahrtNr: '123'},
+	}).name,
+	'S1-123',
+);
+eql(
+	lineNameWithoutFahrtNr({
+		parsed: {name: 'S1 123a', fahrtNr: '123'},
+	}).name,
+	'S1 123a',
+);
 
 const profile = {
 	...baseProfile,
@@ -59,6 +71,4 @@ const profile = {
 	reachableFrom: true,
 };
 
-export {
-	profile,
-};
+export {profile};

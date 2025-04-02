@@ -1,7 +1,7 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
 import trim from 'lodash/trim.js';
 import uniqBy from 'lodash/uniqBy.js';
@@ -19,7 +19,7 @@ import {parseLocation as _parseLocation} from '../../parse/location.js';
 import {formatStation as _formatStation} from '../../format/station.js';
 import {bike} from '../../format/filters.js';
 
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 import {formatLoyaltyCard} from './loyalty-cards.js';
 import {ageGroup, ageGroupFromAge} from './ageGroup.js';
@@ -29,9 +29,8 @@ const transformReqBody = (ctx, body) => {
 	const req = body.svcReqL[0] || {};
 
 	// see https://pastebin.com/qZ9WS3Cx
-	const rtMode = 'routingMode' in ctx.opt
-		? ctx.opt.routingMode
-		: routingModes.REALTIME;
+	const rtMode
+		= 'routingMode' in ctx.opt ? ctx.opt.routingMode : routingModes.REALTIME;
 
 	req.cfg = {
 		...req.cfg,
@@ -67,10 +66,16 @@ const parseGrid = (g) => {
 	// iterative process.
 	return {
 		title: g.title,
-		rows: slices(g.nCols, g.itemL.map(item => Array.isArray(item.hints) && item.hints[0]
-			|| Array.isArray(item.remarkRefs) && item.remarkRefs[0] && item.remarkRefs[0].hint
-			|| {},
-		)),
+		rows: slices(
+			g.nCols,
+			g.itemL.map(
+				(item) => Array.isArray(item.hints) && item.hints[0]
+					|| Array.isArray(item.remarkRefs)
+					&& item.remarkRefs[0]
+					&& item.remarkRefs[0].hint
+					|| {},
+			),
+		),
 	};
 };
 
@@ -88,11 +93,7 @@ const ausstattungKeys = Object.assign(Object.create(null), {
 });
 const parseAusstattungVal = (val) => {
 	val = val.toLowerCase();
-	return val === 'ja'
-		? true
-		: val === 'nein'
-			? false
-			: val;
+	return val === 'ja' ? true : val === 'nein' ? false : val;
 };
 
 const parseAusstattungGrid = (g) => {
@@ -128,22 +129,25 @@ const parseLocWithDetails = ({parsed, common}, l) => {
 	}
 
 	if (Array.isArray(l.gridL)) {
-		const resolveCells = grid => ({
+		const resolveCells = (grid) => ({
 			...grid,
-			rows: grid.rows.map(row => row.map(cell => cell && cell.text)),
+			rows: grid.rows.map((row) => row.map((cell) => cell && cell.text)),
 		});
 
 		let grids = l.gridL
-			.map(grid => parseGrid(grid, common))
+			.map((grid) => parseGrid(grid, common))
 			.map(resolveCells);
 
-		const ausstattung = grids.find(g => slugg(g.title) === 'ausstattung');
+		const ausstattung = grids.find((g) => slugg(g.title) === 'ausstattung');
 		if (ausstattung) {
 			parsed.facilities = parseAusstattungGrid(ausstattung);
 		}
-		const öffnungszeiten = grids.find(g => slugg(g.title) === 'offnungszeiten-reisezentrum');
+		const öffnungszeiten = grids.find(
+			(g) => slugg(g.title) === 'offnungszeiten-reisezentrum',
+		);
 		if (öffnungszeiten) {
-			parsed.reisezentrumOpeningHours = parseReisezentrumÖffnungszeiten(öffnungszeiten);
+			parsed.reisezentrumOpeningHours
+				= parseReisezentrumÖffnungszeiten(öffnungszeiten);
 		}
 
 		grids = without(grids, ausstattung, öffnungszeiten);
@@ -163,17 +167,19 @@ loadFactors[3] = 'very-high';
 loadFactors[4] = 'exceptionally-high';
 
 const parseLoadFactor = (opt, tcocL, tcocX) => {
-	const cls = opt.firstClass
-		? 'FIRST'
-		: 'SECOND';
-	const load = tcocX.map(i => tcocL[i])
-		.find(lf => lf.c === cls);
+	const cls = opt.firstClass ? 'FIRST' : 'SECOND';
+	const load = tcocX.map((i) => tcocL[i])
+		.find((lf) => lf.c === cls);
 	return load && loadFactors[load.r] || null;
 };
 
 const parseArrOrDepWithLoadFactor = ({parsed, res, opt}, d) => {
 	if (d.stbStop.dTrnCmpSX && Array.isArray(d.stbStop.dTrnCmpSX.tcocX)) {
-		const load = parseLoadFactor(opt, res.common.tcocL || [], d.stbStop.dTrnCmpSX.tcocX);
+		const load = parseLoadFactor(
+			opt,
+			res.common.tcocL || [],
+			d.stbStop.dTrnCmpSX.tcocX,
+		);
 		if (load) {
 			parsed.loadFactor = load;
 		}
@@ -188,22 +194,20 @@ opt.age and opt.ageGroup are mutually exclusive.
 Pass in just opt.age, and the age group will calculated automatically.`);
 	}
 
-	const tvlrAgeGroup = 'age' in opt
-		? ageGroupFromAge(opt.age)
-		: opt.ageGroup;
+	const tvlrAgeGroup = 'age' in opt ? ageGroupFromAge(opt.age) : opt.ageGroup;
 
 	const basicCtrfReq = {
 		jnyCl: opt.firstClass === true ? 1 : 2,
 		// todo [breaking]: support multiple travelers
-		tvlrProf: [{
-			type: tvlrAgeGroup || ageGroup.ADULT,
-			...'age' in opt
-				? {age: opt.age}
-				: {},
-			redtnCard: opt.loyaltyCard
-				? formatLoyaltyCard(opt.loyaltyCard)
-				: null,
-		}],
+		tvlrProf: [
+			{
+				type: tvlrAgeGroup || ageGroup.ADULT,
+				...'age' in opt ? {age: opt.age} : {},
+				redtnCard: opt.loyaltyCard
+					? formatLoyaltyCard(opt.loyaltyCard)
+					: null,
+			},
+		],
 		cType: 'PK',
 	};
 	if (refreshJourney && opt.tickets) {
@@ -256,9 +260,7 @@ const parseShpCtx = (addDataTicketInfo) => {
 	}
 };
 
-
 const addDbOfferSelectionUrl = (journey, opt) => {
-
 	// if no ticket contains addData, we can't get the offer selection URL
 	if (journey.tickets.some((t) => t.addDataTicketInfo)) {
 		const endpoint = opt.language === 'de' ? 'dox' : 'eox';
@@ -266,18 +268,26 @@ const addDbOfferSelectionUrl = (journey, opt) => {
 		journey.tickets.forEach((t) => {
 			const shpCtx = parseShpCtx(t.addDataTicketInfo);
 			if (shpCtx) {
-				const url = new URL(`https://mobile.bahn.de/bin/mobil/query.exe/${endpoint}`);
+				const url = new URL(
+					`https://mobile.bahn.de/bin/mobil/query.exe/${endpoint}`,
+				);
 
 				url.searchParams.append('A.1', opt.age);
 				url.searchParams.append('E', 'F');
-				url.searchParams.append('E.1', opt.loyaltyCard ? formatLoyaltyCard(opt.loyaltyCard) : '0');
+				url.searchParams.append(
+					'E.1',
+					opt.loyaltyCard ? formatLoyaltyCard(opt.loyaltyCard) : '0',
+				);
 				url.searchParams.append('K', opt.firstClass ? '1' : '2');
 				url.searchParams.append('M', 'D');
 				url.searchParams.append('RT.1', 'E');
 				url.searchParams.append('SS', journey.legs[0].origin.id);
 				url.searchParams.append('T', journey.legs[0].departure);
 				url.searchParams.append('VH', journey.refreshToken);
-				url.searchParams.append('ZS', journey.legs[journey.legs.length - 1].destination.id);
+				url.searchParams.append(
+					'ZS',
+					journey.legs[journey.legs.length - 1].destination.id,
+				);
 				url.searchParams.append('journeyOptions', '0');
 				url.searchParams.append('journeyProducts', '1023');
 				url.searchParams.append('optimize', '1');
@@ -291,7 +301,6 @@ const addDbOfferSelectionUrl = (journey, opt) => {
 		});
 	}
 };
-
 
 // todo: fix this
 // line: {
@@ -328,7 +337,8 @@ const mutateToAddPrice = (parsed, raw) => {
 		&& raw.trfRes.fareSetL[0].fareL[0]
 	) {
 		const tariff = raw.trfRes.fareSetL[0].fareL[0];
-		if (tariff.price && tariff.price.amount >= 0) { // wat
+		if (tariff.price && tariff.price.amount >= 0) {
+			// wat
 			parsed.price = {
 				amount: tariff.price.amount / 100,
 				currency: 'EUR',
@@ -355,21 +365,20 @@ const isFirstClassTicket = (addData, opt) => {
 };
 
 const mutateToAddTickets = (parsed, opt, j) => {
-	if (
-		j.trfRes
-		&& Array.isArray(j.trfRes.fareSetL)
-	) {
+	if (j.trfRes && Array.isArray(j.trfRes.fareSetL)) {
 		const addData = j.trfRes.fareSetL[0].addData;
 		parsed.tickets = j.trfRes.fareSetL
-			.filter(s => Array.isArray(s.fareL) && s.fareL.length > 0)
+			.filter((s) => Array.isArray(s.fareL) && s.fareL.length > 0)
 			.map((s) => {
 				const fare = s.fareL[0];
-				if (!fare.ticketL) { // if journeys()
+				if (!fare.ticketL) {
+					// if journeys()
 					return {
 						name: fare.buttonText,
 						priceObj: {amount: fare.price.amount},
 					};
-				} else { // if refreshJourney()
+				} else {
+					// if refreshJourney()
 					return {
 						name: fare.name || fare.ticketL[0].name,
 						priceObj: fare.ticketL[0].price,
@@ -393,7 +402,6 @@ const mutateToAddTickets = (parsed, opt, j) => {
 		if (opt.generateUnreliableTicketUrls) {
 			addDbOfferSelectionUrl(parsed, opt);
 		}
-
 	}
 };
 
@@ -680,6 +688,4 @@ const profile = {
 	lines: false, // `.svcResL[0].res.lineL[]` is missing 🤔
 };
 
-export {
-	profile,
-};
+export {profile};

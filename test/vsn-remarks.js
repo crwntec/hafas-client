@@ -16,14 +16,15 @@ const {profile} = client;
 const opt = {
 	results: 100, // maximum number of remarks
 	// filter by time
-	from: Date.now(), to: null,
+	from: Date.now(),
+	to: null,
 	products: null, // filter by affected products
 };
 
 tap.test('parses a remarks() response correctly (VSN)', (t) => {
 	const common = profile.parseCommon({profile, opt, res});
 	const ctx = {profile, opt, common, res};
-	const warnings = res.msgL.map(w => profile.parseWarning(ctx, w));
+	const warnings = res.msgL.map((w) => profile.parseWarning(ctx, w));
 
 	t.same(warnings, expected);
 	t.end();

@@ -27,7 +27,7 @@ const opt = {
 tap.test('parses an arrival correctly (BVG)', (t) => {
 	const common = profile.parseCommon({profile, opt, res});
 	const ctx = {profile, opt, common, res};
-	const arrivals = res.jnyL.map(d => profile.parseArrival(ctx, d));
+	const arrivals = res.jnyL.map((d) => profile.parseArrival(ctx, d));
 
 	t.same(arrivals, expected);
 	t.end();

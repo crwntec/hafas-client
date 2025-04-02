@@ -1,14 +1,14 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
 import {parseHook} from '../../lib/profile-hooks.js';
 
 import {parseLocation as _parseLocation} from '../../parse/location.js';
 import {parseJourney as _parseJourney} from '../../parse/journey.js';
 import {parseMovement as _parseMovement} from '../../parse/movement.js';
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 
 // todo: journey prices
@@ -16,7 +16,7 @@ import {products} from './products.js';
 const fixLocation = ({parsed}, l) => {
 	// weird fix for empty lines, e.g. IC/EC at Flensburg Hbf
 	if (parsed.lines) {
-		parsed.lines = parsed.lines.filter(x => x.id && x.name);
+		parsed.lines = parsed.lines.filter((x) => x.id && x.name);
 	}
 
 	// remove leading zeroes, todo
@@ -90,6 +90,4 @@ const profile = {
 	reachableFrom: true,
 };
 
-export {
-	profile,
-};
+export {profile};

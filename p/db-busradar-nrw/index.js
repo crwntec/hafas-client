@@ -1,9 +1,9 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 
 // DB Busradar NRW app does not allow selecting specific modes of transport to filter results,
 // so the bitmasks had to be determined by querying some stations and looking at the results..
@@ -93,6 +93,4 @@ const profile = {
 	lines: false, // `.svcResL[0].res.lineL[]` is missing 🤔
 };
 
-export {
-	profile,
-};
+export {profile};

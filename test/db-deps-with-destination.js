@@ -29,7 +29,15 @@ tap.test('parses departure.destination correctly (DB)', (t) => {
 	const departure = profile.parseDeparture(ctx, res.jnyL[0]);
 
 	t.ok(departure.destination, 'missing departure.destination');
-	t.equal(departure.destination.type, 'stop', 'invalid departure.destination.type');
-	t.equal(departure.destination.id, '930200', 'invalid departure.destination.id');
+	t.equal(
+		departure.destination.type,
+		'stop',
+		'invalid departure.destination.type',
+	);
+	t.equal(
+		departure.destination.id,
+		'930200',
+		'invalid departure.destination.id',
+	);
 	t.end();
 });

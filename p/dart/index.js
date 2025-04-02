@@ -1,18 +1,20 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 
-const products = [{
-	id: 'bus',
-	mode: 'bus',
-	bitmasks: [32],
-	name: 'Bus',
-	short: 'Bus',
-	default: true,
-}];
+const products = [
+	{
+		id: 'bus',
+		mode: 'bus',
+		bitmasks: [32],
+		name: 'Bus',
+		short: 'Bus',
+		default: true,
+	},
+];
 
 const profile = {
 	...baseProfile,
@@ -27,6 +29,4 @@ const profile = {
 	radar: true,
 };
 
-export {
-	profile,
-};
+export {profile};

@@ -23,10 +23,14 @@ tap.test('withThrottling works', {timeout: 3000}, (t) => {
 		};
 	};
 
-	const profile = withThrottling({
-		...vbbProfile,
-		request: mockedRequest,
-	}, 2, 1000);
+	const profile = withThrottling(
+		{
+			...vbbProfile,
+			request: mockedRequest,
+		},
+		2,
+		1000,
+	);
 	const client = createClient(profile, ua);
 
 	t.plan(3);

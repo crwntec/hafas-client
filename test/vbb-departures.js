@@ -27,7 +27,7 @@ const opt = {
 tap.test('parses a departure correctly (VBB)', (t) => {
 	const common = profile.parseCommon({profile, opt, res});
 	const ctx = {profile, opt, common, res};
-	const departures = res.jnyL.map(d => profile.parseDeparture(ctx, d));
+	const departures = res.jnyL.map((d) => profile.parseDeparture(ctx, d));
 
 	t.same(departures, expected);
 	t.end();

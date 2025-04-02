@@ -36,7 +36,7 @@ const opt = {
 tap.test('parses a journeys() response correctly (VBB)', (t) => {
 	const common = profile.parseCommon({profile, opt, res});
 	const ctx = {profile, opt, common, res};
-	const journeys = res.outConL.map(j => profile.parseJourney(ctx, j));
+	const journeys = res.outConL.map((j) => profile.parseJourney(ctx, j));
 
 	t.same(journeys, expected);
 	t.end();

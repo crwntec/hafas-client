@@ -1,7 +1,7 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
+// import {createRequire} from 'module';
+// const require = createRequire(import.meta.url);
 
 import {parseHook} from '../../lib/profile-hooks.js';
 
@@ -11,7 +11,7 @@ import {parseLocation as _parseLocation} from '../../parse/location.js';
 import {parseJourney as _parseJourney} from '../../parse/journey.js';
 import {parseDeparture as _parseDeparture} from '../../parse/departure.js';
 
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 
 const parseLineWithShortName = ({parsed}, p) => {
@@ -26,10 +26,7 @@ const parseLocation = ({parsed}, l) => {
 
 // todo: move this to parse/tickets.js?
 const parseJourneyWithTickets = ({parsed}, j) => {
-	if (
-		j.trfRes
-		&& Array.isArray(j.trfRes.fareSetL)
-	) {
+	if (j.trfRes && Array.isArray(j.trfRes.fareSetL)) {
 		parsed.tickets = j.trfRes.fareSetL
 			.map((s) => {
 				if (!Array.isArray(s.fareL) || s.fareL.length === 0) {
@@ -45,7 +42,7 @@ const parseJourneyWithTickets = ({parsed}, j) => {
 					})),
 				};
 			})
-			.filter(set => Boolean(set));
+			.filter((set) => Boolean(set));
 
 		// todo: j.trfRes.totalPrice
 		// todo: j.trfRes.msgL
@@ -87,6 +84,4 @@ const profile = {
 	reachableFrom: true,
 };
 
-export {
-	profile,
-};
+export {profile};

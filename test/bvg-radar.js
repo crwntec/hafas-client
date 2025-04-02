@@ -25,7 +25,7 @@ const opt = {
 tap.test('parses a radar() response correctly (BVG)', (t) => {
 	const common = profile.parseCommon({profile, opt, res});
 	const ctx = {profile, opt, common, res};
-	const movements = res.jnyL.map(m => profile.parseMovement(ctx, m));
+	const movements = res.jnyL.map((m) => profile.parseMovement(ctx, m));
 
 	t.same(movements, expected);
 	t.end();
