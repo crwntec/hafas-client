@@ -3,7 +3,7 @@
 // import {createRequire} from 'module';
 // const require = createRequire(import.meta.url);
 
-import baseProfile from './base.json';
+import baseProfile from './base.js';
 
 const products = [{ // todo: what is `8`?
 	id: 'trains',
