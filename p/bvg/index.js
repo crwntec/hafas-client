@@ -1,7 +1,5 @@
 // todo: use import assertions once they're supported by Node.js & ESLint
 // https://github.com/tc39/proposal-import-assertions
-import {createRequire} from 'module';
-const require = createRequire(import.meta.url);
 
 import {parseHook} from '../../lib/profile-hooks.js';
 
@@ -13,7 +11,7 @@ import {parseDeparture as _parseDeparture} from '../../parse/departure.js';
 import {parseStopover as _parseStopover} from '../../parse/stopover.js';
 import {parseJourneyLeg as _parseJourneyLeg} from '../../parse/journey-leg.js';
 
-const baseProfile = require('./base.json');
+import baseProfile from './base.js';
 import {products} from './products.js';
 
 // todo: there's also a referenced icon `{"res":"occup_fig_{low,mid}"}`
